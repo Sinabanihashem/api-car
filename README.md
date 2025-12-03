@@ -127,7 +127,7 @@ async def handler(message):
             return await message.reply("❗ خطا در دریافت اطلاعات.")
 
         output = "🚗 *قیمت لحظه‌ای خودروها:*\n\n"
-        for c in cars[:10]:  # نمایش ۱۰ مورد اول
+        for c in cars[:10]:
             output += (
                 f"🏷 *{c['name']}*\n"
                 f"• برند: {c['brand']}\n"
@@ -166,8 +166,8 @@ mir sina banihashem
 📍 Hosted on: Cloudflare Workers
 🛠 Rubika: https://rubika.ir/Sinabani_api
 🔗 Endpoint: https://car.api-sina-free.workers.dev/cars
-
-
+---
+---
 # 🚗 **SinaCarAPI — Version 1.0.0**
 
 **SinaCarAPI** is a fast, lightweight, and free API that provides **real-time prices of domestic and imported cars in Iran** — without any API Key required.  
