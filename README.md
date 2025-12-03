@@ -277,10 +277,10 @@ for c in cars:
 🤖 Rubika Bot Example (Python)
 
 ```py
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from rubpy import Client, filters
 import requests
 
+bot = Client(name="sina_car_bot")
 API_URL = "https://car.api-sina-free.workers.dev/cars?type=all"
 
 def get_cars():
@@ -290,34 +290,28 @@ def get_cars():
     except:
         return []
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🚗 Welcome!\nSend /cars to get the latest car prices."
-    )
+@bot.on_message_updates(filters.text)
+async def handler(message):
+    text = message.text.strip()
 
-async def cars(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    data = get_cars()
-    if not data:
-        return await update.message.reply_text("❗ Error fetching data.")
+    if text == "قیمت خودرو":
+        cars = get_cars()
+        if not cars:
+            return await message.reply("❗ خطا در دریافت اطلاعات.")
 
-    text = "🚘 *Latest Car Prices:*\n\n"
-    for car in data[:10]:
-        text += (
-            f"🏷 *{car['name']}*\n"
-            f"• Brand: {car['brand']}\n"
-            f"• Market Price: {car['market_price']}\n"
-            f"• Change: {car['change_percent']} ({car['change_value']})\n"
-            f"• Updated: {car['last_update']}\n\n"
-        )
+        output = "🚗 *Latest Car Prices:*\n\n"
+        for c in cars[:10]:
+            output += (
+                f"🏷 *{c['name']}*\n"
+                f"• Brand: {c['brand']}\n"
+                f"• Market Price: {c['market_price']}\n"
+                f"• Change: {c['change_percent']} ({c['change_value']})\n"
+                f"• Updated: {c['last_update']}\n\n"
+            )
 
-    await update.message.reply_text(text, parse_mode="Markdown")
+        await message.reply(output, parse_mode="markdown")
 
-app = ApplicationBuilder().token("YOUR_TELEGRAM_BOT_TOKEN").build()
-
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("cars", cars))
-
-app.run_polling()
+bot.run()
 ```
 
 ---
