@@ -77,8 +77,6 @@ https://car.api-sina-free.workers.dev/cars?type=all
   ]
 }
 ```
-(مقادیر نمونه هستند — خروجی واقعی بسته به لحظه‌ی دریافت متفاوت است.)
-
 
 ---
 
@@ -157,6 +155,178 @@ bot.run()
 
 🔍 تشخیص برند هوشمند با الگوریتم Match
 
+
+
+---
+
+👤 Developer
+
+mir sina banihashem
+
+📍 Hosted on: Cloudflare Workers
+🛠 Rubika: https://rubika.ir/Sinabani_api
+🔗 Endpoint: https://car.api-sina-free.workers.dev/cars
+
+
+# 🚗 **SinaCarAPI — Version 1.0.0**
+
+**SinaCarAPI** is a fast, lightweight, and free API that provides **real-time prices of domestic and imported cars in Iran** — without any API Key required.  
+It delivers complete information including **brand detection, car name, market price, factory price, price changes, change percentage, update time, and more**.  
+Looking for a car price API but can’t find one? Or found one but it's not free?  
+Use this API with zero hassle! ⚡😊
+
+---
+
+## 🌐 **Available Endpoints**
+
+| Description | URL |
+|-------------|-----|
+| Get domestic cars | https://car.api-sina-free.workers.dev/cars?type=domestic |
+| Get imported cars | https://car.api-sina-free.workers.dev/cars?type=imported |
+| Get all cars | https://car.api-sina-free.workers.dev/cars?type=all |
+
+---
+
+## 🔎 **Query Parameter**
+
+| Parameter | Accepted Values | Description |
+|----------|------------------|-------------|
+| `type` | `domestic` / `imported` / `all` | Select category of cars |
+
+If not provided → default value is `domestic`.
+
+---
+
+## 📦 **Response Structure**
+
+Each request returns a JSON object containing:
+
+| Field | Type | Description |
+|--------|------|-------------|
+| brand | string | Detected car brand |
+| name | string | Car model name |
+| market_price | string | Market price |
+| factory_price | string | Factory price |
+| change_percent | string | Percentage price change |
+| change_value | string | Price change amount |
+| last_update | string | Timestamp in ISO format |
+
+---
+
+## 🧪 **Sample Request**
+
+**GET**
+
+https://car.api-sina-free.workers.dev/cars?type=all
+
+---
+
+## 🧾 **Sample JSON Output**
+
+```json
+{
+  "type": "all",
+  "cars": [
+    {
+      "brand": "Iran Khodro",
+      "name": "Peugeot 207 Automatic",
+      "market_price": "1,240,000,000",
+      "factory_price": "0",
+      "change_percent": "0%",
+      "change_value": "0",
+      "last_update": "2025-12-03T09:22:41.120Z"
+    },
+    {
+      "brand": "Kia Motors",
+      "name": "Sportage (Hermes)",
+      "market_price": "3,890,000,000",
+      "factory_price": "0",
+      "change_percent": "-0.3%",
+      "change_value": "-10,000,000",
+      "last_update": "2025-12-03T09:22:41.120Z"
+    }
+  ]
+}
+```
+
+---
+
+💻 Python Usage Example
+
+```py
+import requests
+
+API = "https://car.api-sina-free.workers.dev/cars?type=imported"
+
+res = requests.get(API)
+cars = res.json()["cars"]
+
+for c in cars:
+    print("🚘 Name:", c["name"])
+    print("🏷 Brand:", c["brand"])
+    print("💵 Market Price:", c["market_price"])
+    print("📉 Change:", c["change_percent"])
+    print("⏱ Updated:", c["last_update"])
+    print("-" * 30)
+```
+
+---
+
+🤖 Rubika Bot Example (Python)
+
+```py
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import requests
+
+API_URL = "https://car.api-sina-free.workers.dev/cars?type=all"
+
+def get_cars():
+    try:
+        res = requests.get(API_URL, timeout=5)
+        return res.json().get("cars", [])
+    except:
+        return []
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "🚗 Welcome!\nSend /cars to get the latest car prices."
+    )
+
+async def cars(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    data = get_cars()
+    if not data:
+        return await update.message.reply_text("❗ Error fetching data.")
+
+    text = "🚘 *Latest Car Prices:*\n\n"
+    for car in data[:10]:
+        text += (
+            f"🏷 *{car['name']}*\n"
+            f"• Brand: {car['brand']}\n"
+            f"• Market Price: {car['market_price']}\n"
+            f"• Change: {car['change_percent']} ({car['change_value']})\n"
+            f"• Updated: {car['last_update']}\n\n"
+        )
+
+    await update.message.reply_text(text, parse_mode="Markdown")
+
+app = ApplicationBuilder().token("YOUR_TELEGRAM_BOT_TOKEN").build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("cars", cars))
+
+app.run_polling()
+```
+
+---
+
+🎯 Why Choose SinaCarAPI?
+
+⚡ Super fast
+❌ No API Key required
+♻️ Fresh data on every request
+📊 Accurate classification (Domestic / Imported)
+🔍 Smart brand detection engine
 
 
 ---
